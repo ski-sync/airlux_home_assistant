@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  homeassistant_custom:
+    image: homeassistant/home-assistant:stable
+    container_name: HOME_ASSISTANT
+    hostname: HOME_ASSISTANT
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - 8123:8123
+    volumes:
+      - config:/config
+    restart: always
+
+  webserver:
+    build: .
+    container_name: MAC_ADRESSE
+    hostname: MAC_ADRESSE
+    ports:
+    - 8080:8080
+    restart: always
+    depends_on:
+      - homeassistant_custom
+volumes:
+  config:
+    driver: local

@@ -54,6 +54,10 @@ for i in "${!datacol[@]}"; do
   local_port=${array[0]}
   docker_address=${array[1]}
 
+  echo $remote_port;
+  echo $local_port;
+  echo $docker_address;
+  
   # Set up the autossh command
   autossh -M 0 -f -N -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" \
     -R $remote_port:$docker_address:$local_port root@ec2-16-170-224-5.eu-north-1.compute.amazonaws.com -p 2222

@@ -1,7 +1,7 @@
 FROM debian:12.5-slim
 
 # Installez les outils nécessaires (nano est facultatif, mais utile pour le débogage)
-RUN apt-get update && apt-get install -y supervisor openssh-client busybox net-tools&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get update && apt-get install -y supervisor openssh-client busybox net-tools curl autossh && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && mkdir -p /var/www/html 
 
 COPY generate_ssh.sh /usr/local/bin/generate_ssh.sh
 COPY connect.sh /usr/local/bin/connect.sh

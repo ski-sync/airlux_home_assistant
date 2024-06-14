@@ -2,9 +2,11 @@
 
 # Get the MAC address of eth0
 MAC_ADDRESS=$(cat /sys/class/net/eth0/address)
+echo "MAC Address: $MAC_ADDRESS"
 
 # Read the SSH public key from the specified file
 ssh_key=$(cat ~/.ssh/mykey.pub)
+echo "SSH Key: $ssh_key"
 
 # Define the local ports and corresponding Docker addresses
 PORT_HOME_ASSISTANT=("8123" "HOME_ASSISTANT")
@@ -31,10 +33,14 @@ response=$(curl -X GET 'https://api.proxy.ski-sync.com/api/register' \
     ]
 }")
 
+echo "API Response: $response"
+
 # Assuming the response is a JSON array of port numbers, e.g., [1234, 5678]
 # Clean up the response to extract the port numbers
 cleaned_ports=$(echo $response | tr -d '[]')
 IFS=',' read -r -a port_array <<< "$cleaned_ports"
+
+echo "Cleaned Ports: ${port_array[@]}"
 
 # Check if we received the expected number of ports
 if [ "${#port_array[@]}" -ne "${#datacol[@]}" ]; then
@@ -54,11 +60,10 @@ for i in "${!datacol[@]}"; do
   local_port=${array[0]}
   docker_address=${array[1]}
 
-  echo $remote_port;
-  echo $local_port;
-  echo $docker_address;
-  
+  echo "Setting up tunnel: Remote Port: $remote_port, Local Port: $local_port, Docker Address: $docker_address"
+
   # Set up the autossh command
-  autossh -M 0 -f -N -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" \
+  autossh -M 0 -f -N -v -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" \
+    -o "IdentityFile=~/.ssh/mykey" \
     -R $remote_port:$docker_address:$local_port root@ec2-16-170-224-5.eu-north-1.compute.amazonaws.com -p 2222
 done
